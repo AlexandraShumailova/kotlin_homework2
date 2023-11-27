@@ -2,6 +2,7 @@ package com.example.hwapi.data
 
 import kotlinx.coroutines.flow.Flow
 import retrofit2.http.GET
+import java.io.IOException
 
 interface Api {
     @GET("products")

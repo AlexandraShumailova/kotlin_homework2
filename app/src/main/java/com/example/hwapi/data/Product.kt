@@ -13,3 +13,10 @@ data class Product(
     val thumbnail: String,
     val title: String
 )
+
+data class Products(
+    val limit: Int,
+    val products: List<Product>,
+    val skip: Int,
+    val total: Int
+)

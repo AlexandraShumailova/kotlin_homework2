@@ -5,9 +5,7 @@ import kotlinx.coroutines.flow.flow
 import okio.IOException
 import retrofit2.HttpException
 
-/**
- * @author Android Devs Academy (Ahmed Guedmioui)
- */
+
 class ProductsRepositoryImpl(
     private val api: Api
 ): ProductsRepository {
@@ -20,6 +18,7 @@ class ProductsRepositoryImpl(
             } catch (e: IOException) {
                 e.printStackTrace()
                 emit(Result.Error(message = "Error loading products"))
+
                 return@flow
             } catch (e: HttpException) {
                 e.printStackTrace()
