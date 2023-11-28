@@ -6,9 +6,7 @@ import okio.IOException
 import retrofit2.HttpException
 
 
-class ProductsRepositoryImpl(
-    private val api: Api
-): ProductsRepository {
+class ProductsRepositoryImpl( private val api: Api): ProductsRepository {
 
     override suspend fun getProductsList(): Flow<Result<List<Product>>> {
         return flow {
@@ -32,7 +30,5 @@ class ProductsRepositoryImpl(
 
             emit(Result.Success(productsFromApi.products))
         }
-
     }
-
 }

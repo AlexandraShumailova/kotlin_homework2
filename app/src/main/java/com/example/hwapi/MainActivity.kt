@@ -2,6 +2,7 @@ package com.example.hwapi
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.provider.Telephony.Mms.Addr
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -89,31 +90,13 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-
-                    
-                    Text(text = "err: ${iserror}.")
-                    Text(text = "                      loading: ${loading}.")
-
                     if (iserror){
                         ShowError(viewModel)
                     } else {
-                        if (productList.isEmpty()) {
+                        if (productList.isEmpty() or loading) {
                             ShowLoading()
                         } else {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                contentPadding = PaddingValues(16.dp)
-                            ) {
-                                items(productList.size) { index ->
-                                    Product(productList[index+lengthOfColumn])
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                }
-                                //lengthOfColumn += countOfItems
-                            }
-//                            if (lengthOfColumn < productList.size){
-//                                ShowButtonAdd(viewModel)
-//                            }
+                            AddList(productList, countOfItems, lengthOfColumn, viewModel)
                         }
                     }
 
@@ -123,21 +106,42 @@ class MainActivity : ComponentActivity() {
     }
 }
 @Composable
+fun AddList(productList: List<Product>, countOfItems: Int, lengthOfColumn: Int, viewModel: ProductsViewModel) {
+    //var lengthOfColumn = lengthOfColumn
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(16.dp)
+    ) {
+        items(productList.size) { index ->
+            Product(productList[index+lengthOfColumn])
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+//    lengthOfColumn += countOfItems
+//    if (lengthOfColumn < productList.size){
+//        ShowButtonAdd(viewModel)
+//    }
+}
+
+/*@Composable
+fun ShowButtonAdd(viewModel: ProductsViewModel){}
+ */
+
+@Composable
 fun ShowError(viewModel: ProductsViewModel){
     Row(
         modifier = Modifier
             .padding(16.dp)
             .fillMaxWidth()
-//            .align(Alignment.BottomCenter)
     ) {
-        Text(text = "Sorry, but error...")
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 viewModel.loadingItems()
             }
         ) {
-            Text(text = "Try again")
+            Text(text = "An error has occurred. Try again")
         }
     }
 }
@@ -150,24 +154,6 @@ fun ShowLoading(){
         CircularProgressIndicator()
     }
 }
-@Composable
-fun ShowButtonAdd(viewModel: ProductsViewModel){
-    Row(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-//            .align(Alignment.BottomCenter)
-    ) {
-        Button(
-            modifier = Modifier.fillMaxWidth(),
-            onClick = {
-                viewModel.loadingItems()
-            }
-        ) {
-            Text(text = "Try again")
-        }
-    }
-}
 
 @Composable
 fun Product(product: Product) {
@@ -176,18 +162,16 @@ fun Product(product: Product) {
             .size(Size.ORIGINAL).build()
     ).state
 
-    Column(
+    Row(
         modifier = Modifier
             .clip(RoundedCornerShape(20.dp))
-            //.height(300.dp)
             .fillMaxWidth()
-            //.background(MaterialTheme.colorScheme.primaryContainer)
     ) {
-
         if (imageState is AsyncImagePainter.State.Error) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primaryContainer)
                     .height(200.dp),
                 contentAlignment = Alignment.Center
             ) {
@@ -197,7 +181,6 @@ fun Product(product: Product) {
                 }
             }
         }
-
         if (imageState is AsyncImagePainter.State.Success) {
             Image(
                 modifier = Modifier
@@ -208,25 +191,6 @@ fun Product(product: Product) {
                 contentScale = ContentScale.Crop
             )
         }
-
         Spacer(modifier = Modifier.height(6.dp))
-
-        /*Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = "${product.title} -- Price: ${product.price}$",
-            fontSize = 17.sp,
-            fontWeight = FontWeight.SemiBold
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        Text(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            text = product.description,
-            fontSize = 13.sp,
-        )
-
-         */
-
     }
 }
